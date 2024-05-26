@@ -17,6 +17,13 @@ route::post('/registration_post',[AuthController::class,'registration_post']);
 route::get('login', [AuthController::class, 'login']);
 route::post('login_post', [AuthController::class, 'login_post']);
 
+
+// Recuperar contraseña
+route::get('forgot', [AuthController::class, 'forgot']);
+
+
+
+
 //superadmin
 route::group(['middleware' => 'superadmin'], function(){
     route::get('superadmin/dashboard', [DashboardController::class, 'dashboard']);
@@ -30,6 +37,14 @@ Route::group(['middleware' => 'admin'], function(){
   route::get('admin/dashboard', [DashboardController::class, 'dashboard']);
 
 });
+
+
+//usuarios
+//admin
+Route::group(['middleware' => 'user'], function(){
+    route::get('user/dashboard', [DashboardController::class, 'dashboard']);
+
+  });
 
 
 //cerrar sesion

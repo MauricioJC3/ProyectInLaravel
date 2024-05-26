@@ -45,12 +45,22 @@ class AuthController extends Controller
       return view('auth.login');
     }
 
+
+
+    public function forgot()
+    {
+        return view('auth.forgot');
+    }
+
+
+
+
     public function login_post(Request $request)
     {
       //dd($request->all());
       if(Auth::attempt(['email' => $request->email, 'password' => $request->password], true))
       {
-          if (Auth::User()->is_role == '2') 
+          if (Auth::User()->is_role == '2')
           {
             //echo "Super Admin"; die();
             return redirect()->intended('superadmin/dashboard');
@@ -60,7 +70,12 @@ class AuthController extends Controller
             //echo "Admin"; die();
             return redirect()->intended('admin/dashboard');
           }
-          else 
+          else if (Auth::User()->is_role == '0')
+          {
+            //echo "user"; die();
+            return redirect()->intended('user/dashboard');
+          }
+          else
           {
             return redirect('login')->with('error', 'No tienes permisos..');
           }
@@ -73,7 +88,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect(url('login'));    
+        return redirect(url('login'));
     }
 
 }

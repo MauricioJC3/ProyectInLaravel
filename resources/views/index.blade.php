@@ -13,9 +13,23 @@
         <div class="wrapper">
             <div class="title"><span>Bienvenido a la página</span></div>
             <form>
-              @if(Auth::check())
+                @if(Auth::check())
+                    @if(Auth::user()->is_role == 2)
+                        <div class="singup-link"> Super Admin Esta logeado
+                            <a href="{{ url('superadmin/dashboard') }}">Dashboard</a></div>
+                        </div>
+                    @elseif (Auth::user()->is_role == 1)
+                    <div class="singup-link">Admin Esta logeado
+                        <a href="{{ url('admin/dashboard') }}">Dashboard</a></div>
+                    </div>
 
-              @else
+                    @elseif (Auth::user()->is_role == 0)
+                    <div class="singup-link">Usario Esta logeado
+                        <a href="{{ url('admin/dashboard') }}">Dashboard</a></div>
+                    </div>
+
+                    @endif
+                @else
                 <div class="signup-link">Sign in? <a href="{{url('login')}}">Login</a></div>
                 <div class="signup-link">Join now? <a href="{{ url('registro') }}">Registration</a></div>
                 @endif

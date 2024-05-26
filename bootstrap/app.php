@@ -6,7 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
-
+use App\Http\Middleware\UserMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,11 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        
+
       $middleware->alias([
 
         'superadmin'=> SuperAdminMiddleware::class,
-        'admin'=> AdminMiddleware::class
+        'admin'=> AdminMiddleware::class,
+        'user'=> UserMiddleware::class
 
       ]);
 

@@ -16,7 +16,7 @@
     <span style="color:red;">{{ $errors->first('confirm_password') }}<br></span>
     @include('_message')
 
-    
+
         <div class="wrapper">
             <div class="title"><span>Bienvenido Registrate</span></div>
             <form action="{{url('registration_post')}}" method="post">
@@ -44,6 +44,7 @@
                         <option value="">Selecione un rol</option>
                         <option {{ old('is_role') == '2' ? 'selected' : '' }} value="2">Super Administrador</option>
                         <option {{ old('is_role') == '1' ? 'selected' : '' }} value="1">Administrador</option>
+                        <option {{ old('is_role') == '0' ? 'selected' : '' }} value="0">usuario</option>
                     </select>
                 </div>
 

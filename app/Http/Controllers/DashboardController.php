@@ -20,9 +20,14 @@ class DashboardController extends Controller
       {
           return view('admin.dashboard');
       }
-      else 
+      else if (Auth::user()->is_role == 0)
       {
-          
+        $data['getRecord'] = User::find(Auth::user()->id);
+          return view('user.dashboard', $data);
+      }
+      else
+      {
+
       }
 
     }
