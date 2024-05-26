@@ -14,7 +14,7 @@
 
         <div class="wrapper">
             <div class="title"><span>Recuperar contraseña</span></div>
-            <form>
+            <form action="{{ url('forgot_post') }}" method="post">
             @csrf
                 <div class="row">
                     <i class="fas fa-user"></i>

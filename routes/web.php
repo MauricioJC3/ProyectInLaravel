@@ -20,6 +20,10 @@ route::post('login_post', [AuthController::class, 'login_post']);
 
 // Recuperar contraseña
 route::get('forgot', [AuthController::class, 'forgot']);
+route::post('forgot_post', [AuthController::class, 'forgot_post']);
+
+route::get('reset/{token}', [AuthController::class, 'getReset']);
+
 
 
 
