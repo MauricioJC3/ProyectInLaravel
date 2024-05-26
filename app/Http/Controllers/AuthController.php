@@ -9,10 +9,18 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPasswordMail;
-
+use App\Http\Requests\ResetPassword;
 
 class AuthController extends Controller
 {
+
+
+        /* ////////////////////////////*/
+        // Registrarse
+    /* //////////////////////////// */
+
+
+
     public function registrarse()
     {
         return view('auth.registro');
@@ -52,6 +60,9 @@ class AuthController extends Controller
 
 
 
+    /* ////////////////////////////*/
+        // Iniciar Sesión
+    /* //////////////////////////// */
 
 
 
@@ -87,6 +98,11 @@ class AuthController extends Controller
 
 
 
+
+    /* ////////////////////////////*/
+        // Recuperar contraseña
+    /* //////////////////////////// */
+
     public function forgot()
 {
     return view('auth.forgot');
@@ -96,7 +112,7 @@ public function forgot_post(Request $request)
 {
     $user = User::where('email', $request->email)->first();
     if ($user) {
-        $user->remember_token = Str::random(60);
+        //$user->remember_token = Str::random(60);
         $user->save();
 
         Mail::to($user->email)->send(new ForgotPasswordMail($user));
@@ -116,6 +132,23 @@ public function getReset($token)
 
     return view('auth.reset', ['token' => $token]);
 }
+
+public function postReset($token, ResetPassword $request)
+    {
+        $user = User::where('remember_token', '=', $token);
+
+        if ($user->count() == 0) {
+            abort(403);
+        }
+        $user = $user->first();
+
+        $user->password = Hash::make($request->password);
+        $user->remember_token = Str::random(50);
+        $user->save();
+
+        return redirect('login')->with('success', 'Contraseña restablecida');
+    }
+
 
 
     public function logout()
