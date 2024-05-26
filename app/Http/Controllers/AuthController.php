@@ -88,48 +88,34 @@ class AuthController extends Controller
 
 
     public function forgot()
-    {
-        return view('auth.forgot');
+{
+    return view('auth.forgot');
+}
+
+public function forgot_post(Request $request)
+{
+    $user = User::where('email', $request->email)->first();
+    if ($user) {
+        $user->remember_token = Str::random(60);
+        $user->save();
+
+        Mail::to($user->email)->send(new ForgotPasswordMail($user));
+
+        return redirect()->back()->with('success', 'Revise su correo electrónico para restablecer la contraseña');
+    } else {
+        return redirect()->back()->with('error', 'El correo utilizado no está registrado en el sistema');
+    }
+}
+
+public function getReset($token)
+{
+    $user = User::where('remember_token', $token)->first();
+    if (!$user) {
+        abort(403);
     }
 
-    public function forgot_post(Request $request)
-    {
-        //dd($request->all());
-
-        $count = User::where('email', '=' , $request->email)->count();
-        if ($count > 0)
-        {
-            $user = User::where('email', '=' , $request->email)->first();
-            //$user->remember_token = Str::random(50);
-            $user->save();
-
-            Mail::to($user->email)->send(new ForgotPasswordMail($user));
-
-
-            return redirect()->back()->with('success', 'Revise su correo electrónico para restablecer la contraseña');
-        }
-        else
-        {
-            return redirect()->back()->with('error', 'El correo utilizado no esta registrado en el sistema');
-        }
-    }
-
-
-    public function getReset(Request $request, $token)
-    {
-        //dd($token);
-        $user = User::where('remember_token', '=' , $token);
-        if($user->count() == 0)
-        {
-            abort(403);
-        }
-
-        $user = $user->first();
-        $data['token'] = $token;
-
-        return view('auth.reset', $data);
-
-    }
+    return view('auth.reset', ['token' => $token]);
+}
 
 
     public function logout()

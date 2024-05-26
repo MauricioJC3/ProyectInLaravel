@@ -19,10 +19,9 @@ route::post('login_post', [AuthController::class, 'login_post']);
 
 
 // Recuperar contraseña
-route::get('forgot', [AuthController::class, 'forgot']);
-route::post('forgot_post', [AuthController::class, 'forgot_post']);
-
-route::get('reset/{token}', [AuthController::class, 'getReset']);
+Route::get('forgot', [AuthController::class, 'forgot'])->name('password.request');
+Route::post('forgot_post', [AuthController::class, 'forgot_post'])->name('password.email');
+Route::get('reset/{token}', [AuthController::class, 'getReset'])->name('password.reset');
 
 
 
