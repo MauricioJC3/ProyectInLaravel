@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\MyPimeController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use PharIo\Manifest\Author;
 
@@ -31,7 +36,13 @@ Route::post('reset_post/{token}', [AuthController::class, 'postReset'])->name('p
 route::group(['middleware' => 'superadmin'], function(){
     route::get('superadmin/dashboard', [DashboardController::class, 'dashboard']);
 
+    Route::resource('mypimes', MyPimeController::class);
+    Route::post('mypimes/{mypime}/toggle-status', [MyPimeController::class, 'toggleStatus'])->name('mypimes.toggleStatus');
 
+    Route::resource('products', ProductController::class);
+    Route::resource('orders', OrderController::class);
+    Route::resource('carts', CartController::class);
+    Route::resource('messages', MessageController::class);
 });
 
 
@@ -43,7 +54,6 @@ Route::group(['middleware' => 'admin'], function(){
 
 
 //usuarios
-//admin
 Route::group(['middleware' => 'user'], function(){
     route::get('user/dashboard', [DashboardController::class, 'dashboard']);
 
