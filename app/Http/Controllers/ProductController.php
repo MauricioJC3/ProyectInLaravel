@@ -20,6 +20,14 @@ class ProductController extends Controller
         return view('products.create', compact('mypimes'));
     }
 
+
+
+
+        /* ////////////////////////////*/
+        // crear producto
+    /* //////////////////////////// */
+
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -49,12 +57,58 @@ class ProductController extends Controller
         return view('products.edit', compact('product', 'mypimes'));
     }
 
+
+
+        /* ////////////////////////////*/
+        // actualizar producto
+    /* //////////////////////////// */
+
+
+
     public function update(Request $request, $id)
     {
         $product = Product::find($id);
-        $product->update($request->all());
+
+        // Borra la imagen antigua si existe
+        if ($request->hasFile('image')) {
+            $oldImagePath = public_path('assets/images/' . $product->image);
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
+            }
+
+            // Guarda la nueva imagen
+            $data = $request->validate([
+                'nombre_product' => 'required|string|max:255',
+                'price_product' => 'required|numeric',
+                'description' => 'required|string',
+                'status' => 'required|in:disponible,no disponible',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            $imageName = time().'.'.$request->image->extension();
+            $request->image->move(public_path('assets/images'), $imageName);
+            $data['image'] = $imageName;
+        } else {
+            // Si no se proporciona una nueva imagen, solo actualiza los otros datos
+            $data = $request->validate([
+                'nombre_product' => 'required|string|max:255',
+                'price_product' => 'required|numeric',
+                'description' => 'required|string',
+                'status' => 'required|in:disponible,no disponible',
+            ]);
+        }
+
+        $product->update($data);
+
         return redirect()->route('products.index');
     }
+
+
+
+        /* ////////////////////////////*/
+        // borrar producto
+    /* //////////////////////////// */
+
 
     public function destroy($id)
     {
