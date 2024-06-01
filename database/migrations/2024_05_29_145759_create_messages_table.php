@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('message', 500)->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

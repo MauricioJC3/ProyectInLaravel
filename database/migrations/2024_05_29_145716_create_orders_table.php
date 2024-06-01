@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('status', ['pendiente', 'completado'])->default('pendiente');
             $table->timestamps();
         });
+
     }
 
     /**
