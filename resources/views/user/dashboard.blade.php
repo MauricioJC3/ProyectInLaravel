@@ -1,3 +1,5 @@
+@extends('layouts.navbarUser');
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

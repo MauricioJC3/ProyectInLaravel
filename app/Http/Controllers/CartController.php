@@ -51,20 +51,21 @@ class CartController extends Controller
     {
         $userId = Auth::id();
         $cartItems = Cart::where('user_id', $userId)->get();
-        $user = Auth::user();
+        return view('user.cart.checkout', compact('cartItems'));
+    }
 
-        // Verificar que todos los campos requeridos del usuario están presentes
-        if (!$user->name || !$user->phone || !$user->email || !$user->address) {
-            return redirect()->route('user.cart.index')->with('error', 'Por favor, complete su perfil antes de finalizar la compra.');
-        }
+    public function placeOrder(Request $request)
+    {
+        $userId = Auth::id();
+        $cartItems = Cart::where('user_id', $userId)->get();
 
         $order = Order::create([
             'user_id' => $userId,
-            'name_user' => $user->name,
-            'number_user' => $user->phone,
-            'email_user' => $user->email,
-            'method' => 'Tarjeta de Crédito', // Puedes cambiar esto según sea necesario
-            'address_user' => $user->address,
+            'name_user' => $request->input('name_user', 'N/A'),
+            'number_user' => $request->input('number_user', 'N/A'),
+            'email_user' => $request->input('email_user', 'N/A'),
+            'method' => $request->input('method', 'N/A'),
+            'address_user' => $request->input('address_user', 'N/A'),
             'total_products' => $cartItems->sum('quantity'),
             'total_price' => $cartItems->sum(function($cartItem) {
                 return $cartItem->price_product * $cartItem->quantity;

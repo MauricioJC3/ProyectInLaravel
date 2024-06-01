@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.navbarUser')
 
 @section('content')
 <div class="container">
@@ -44,10 +44,7 @@
                 @endforeach
             </tbody>
         </table>
-        <form action="{{ route('user.cart.checkout') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-success">Finalizar Compra</button>
-        </form>
+        <a href="{{ route('user.cart.checkout') }}" class="btn btn-success">Finalizar Compra</a>
     @endif
 </div>
 @endsection
