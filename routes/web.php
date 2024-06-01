@@ -54,10 +54,19 @@ Route::group(['middleware' => 'admin'], function(){
 
 
 //usuarios
-Route::group(['middleware' => 'user'], function(){
-    route::get('user/dashboard', [DashboardController::class, 'dashboard']);
+  Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
+    route::get('/dashboard', [DashboardController::class, 'dashboard']);
+    Route::get('/products', [ProductController::class, 'show'])->name('products.index');
 
-  });
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/{cart}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{cart}', [CartController::class, 'destroy'])->name('cart.destroy');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+});
+
 
 
 //cerrar sesion

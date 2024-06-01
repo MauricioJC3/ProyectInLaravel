@@ -22,6 +22,28 @@ class ProductController extends Controller
 
 
 
+    public function show(Request $request)
+    {
+        $search = $request->input('search');
+        $products = Product::where('nombre_product', 'like', "%{$search}%")->get();
+        return view('user.products.index', compact('products'));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /* ////////////////////////////*/
         // crear producto

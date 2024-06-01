@@ -22,4 +22,14 @@ class Product extends Model
     {
         return $this->belongsTo(MyPime::class, 'mypime_nit', 'nit_mypime');
     }
+
+    public function cartItems()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }
