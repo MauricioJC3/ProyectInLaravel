@@ -11,6 +11,13 @@ use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use PharIo\Manifest\Author;
 
+
+
+
+
+
+
+
 Route::get('/',[HomeController::class,'index']);
 
 // Registrarse
@@ -32,6 +39,20 @@ Route::post('reset_post/{token}', [AuthController::class, 'postReset'])->name('p
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //superadmin
 route::group(['middleware' => 'superadmin'], function(){
     route::get('superadmin/dashboard', [DashboardController::class, 'dashboard']);
@@ -46,11 +67,29 @@ route::group(['middleware' => 'superadmin'], function(){
 });
 
 
+
+
+
+
+
+
+
+
+
 //admin
 Route::group(['middleware' => 'admin'], function(){
   route::get('admin/dashboard', [DashboardController::class, 'dashboard']);
 
 });
+
+
+
+
+
+
+
+
+
 
 
 //usuarios
@@ -71,5 +110,12 @@ Route::group(['middleware' => 'admin'], function(){
 
 
 
-//cerrar sesion
+
+
+
+
+
+
+
+//cerrar sesión
 route::get('logout', [AuthController::class, 'logout']);

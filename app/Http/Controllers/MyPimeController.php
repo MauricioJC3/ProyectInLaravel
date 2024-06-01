@@ -10,12 +10,12 @@ class MyPimeController extends Controller
     public function index()
     {
         $mypimes = MyPime::all();
-        return view('mypimes.index', compact('mypimes'));
+        return view('superadmin.mypimes.index', compact('mypimes'));
     }
 
     public function create()
     {
-        return view('mypimes.create');
+        return view('superadmin.mypimes.create');
     }
 
     public function edit($id)

@@ -11,13 +11,13 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with('mypime')->get();
-        return view('products.index', compact('products'));
+        return view('superadmin.products.index', compact('products'));
     }
 
     public function create()
     {
         $mypimes = MyPime::all();
-        return view('products.create', compact('mypimes'));
+        return view('superadmin.products.create', compact('mypimes'));
     }
 
 
