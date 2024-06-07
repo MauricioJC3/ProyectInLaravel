@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CajeroAuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\MyPimeAuthController;
 use App\Http\Controllers\MyPimeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -109,11 +111,18 @@ Route::group(['middleware' => 'admin'], function(){
 });
 
 
+Route::get('mypime-login', [MyPimeAuthController::class, 'showLoginForm'])->name('mypime.login');
+Route::post('mypime-login', [MyPimeAuthController::class, 'login'])->name('mypime.login.post');
+
+
+Route::get('mypime.dashboard', function() {
+    return view('mypime.dashboard');  // o apuntar a una acción del controlador
+})->name('mypime.dashboard')->middleware('auth:mypime');
 
 
 
-
-
+Route::get('cajero-login', [CajeroAuthController::class, 'showLoginForm'])->name('cajero.login');
+Route::post('cajero-login', [CajeroAuthController::class, 'login'])->name('cajero.login.post');
 
 
 

@@ -5,6 +5,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckCajeroStatus;
+use App\Http\Middleware\CheckMyPimeStatus;
 use App\Http\Middleware\SuperAdminMiddleware;
 use App\Http\Middleware\UserMiddleware;
 
@@ -20,7 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         'superadmin'=> SuperAdminMiddleware::class,
         'admin'=> AdminMiddleware::class,
-        'user'=> UserMiddleware::class
+        'user'=> UserMiddleware::class,
+        'mypime'=> CheckMyPimeStatus::class,
+        'cajero'=> CheckCajeroStatus::class
 
       ]);
 

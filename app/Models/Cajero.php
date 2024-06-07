@@ -3,23 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class MyPime extends Authenticatable
+class Cajero extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'mypimes'; // Explicitly define the table name
+    protected $table = 'cajeros';
 
     protected $fillable = [
         'nit_mypime',
-        'name_mypime',
-        'photo',
-        'address_mypime',
-        'phone_mypime',
-        'email_mypime',
+        'name',
+        'email',
         'username',
         'password',
         'status'
@@ -30,8 +26,8 @@ class MyPime extends Authenticatable
         'remember_token',
     ];
 
-    public function products()
+    public function mypime()
     {
-        return $this->hasMany(Product::class, 'mypime_nit', 'nit_mypime');
+        return $this->belongsTo(MyPime::class, 'nit_mypime', 'nit_mypime');
     }
 }
