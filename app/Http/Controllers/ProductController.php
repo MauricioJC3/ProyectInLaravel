@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\MyPime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -76,7 +77,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $mypimes = MyPime::all();
-        return view('products.edit', compact('product', 'mypimes'));
+        return view('superadmin.products.edit', compact('product', 'mypimes'));
     }
 
 
@@ -91,14 +92,13 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
 
-        // Borra la imagen antigua si existe
-        if ($request->hasFile('image')) {
-            $oldImagePath = public_path('assets/images/' . $product->image);
-            if (file_exists($oldImagePath)) {
-                unlink($oldImagePath);
-            }
+        if (!$product) {
+            Log::error("No se ha podido encontrar el producto con el ID: $id");
+            return redirect()->route('products.index')->with('error', 'Producto no encontrado');
+        }
 
-            // Guarda la nueva imagen
+        try {
+            // Validación de datos de entrada
             $data = $request->validate([
                 'nombre_product' => 'required|string|max:255',
                 'price_product' => 'required|numeric',
@@ -107,22 +107,39 @@ class ProductController extends Controller
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('assets/images'), $imageName);
-            $data['image'] = $imageName;
-        } else {
-            // Si no se proporciona una nueva imagen, solo actualiza los otros datos
-            $data = $request->validate([
-                'nombre_product' => 'required|string|max:255',
-                'price_product' => 'required|numeric',
-                'description' => 'required|string',
-                'status' => 'required|in:disponible,no disponible',
-            ]);
+            // Borra la imagen antigua si existe y guarda la nueva imagen
+            if ($request->hasFile('image')) {
+                $oldImagePath = public_path('assets/images/' . $product->image);
+                if (file_exists($oldImagePath)) {
+                    if (!unlink($oldImagePath)) {
+                        Log::error("Error al borrar imagen antigua en la ruta: $oldImagePath");
+                    }
+                }
+
+                $imageName = time() . '.' . $request->image->extension();
+                if (!$request->image->move(public_path('assets/images'), $imageName)) {
+                    Log::error("Error al mover la imagen cargada a la ruta: assets/images");
+                    return redirect()->route('products.index')->with('error', 'Error al mover la imagen cargada');
+                }
+                $data['image'] = $imageName;
+            }
+
+            // Actualiza el producto
+            $product->update($data);
+
+            return redirect()->route('products.index')->with('success', 'Producto actualizado con éxito');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Loguear errores de validación específicos
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    Log::error("Validation error for $field: $message");
+                }
+            }
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            Log::error("Se ha producido un error inesperado: " . $e->getMessage());
+            return redirect()->route('products.index')->with('error', 'Ocurrió un error inesperado');
         }
-
-        $product->update($data);
-
-        return redirect()->route('products.index');
     }
 
 

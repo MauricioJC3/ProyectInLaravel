@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MyPime;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class MyPimeController extends Controller
 {
@@ -21,7 +23,7 @@ class MyPimeController extends Controller
     public function edit($id)
     {
         $mypime = MyPime::find($id);
-        return view('mypimes.edit', compact('mypime'));
+        return view('superadmin.mypimes.edit', compact('mypime'));
     }
 
 
@@ -37,6 +39,13 @@ class MyPimeController extends Controller
     {
         $mypime = MyPime::find($id);
 
+
+        if (!$mypime) {
+            Log::error("No se ha podido encontrar la microempresa con el ID: $id");
+            return redirect()->route('mypimes.index')->with('error', 'Microempresa no encontrada');
+        }
+
+
         // Borra la imagen antigua si existe
         if ($request->hasFile('photo')) {
             $oldImagePath = public_path('assets/imagenes_microempresas/' . $mypime->photo);
@@ -44,14 +53,25 @@ class MyPimeController extends Controller
                 unlink($oldImagePath);
             }
 
-            // Guarda la nueva imagen
-            $data = $request->validate([
+            $validator = Validator::make($request->all(), [
                 'name_mypime' => 'required',
                 'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'address_mypime' => 'required',
                 'phone_mypime' => 'required',
                 'email_mypime' => 'required|email',
             ]);
+
+            if ($validator->fails()) {
+                // Loguear errores específicos de validación
+                foreach ($validator->errors()->all() as $error) {
+                    Log::error('Validation error: ' . $error);
+                }
+
+                // Retornar con errores
+            return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
 
             $imageName = time().'.'.$request->photo->extension();
             $request->photo->move(public_path('assets/imagenes_microempresas'), $imageName);
