@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgotPasswordMail;
 use App\Http\Requests\ResetPassword;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -32,25 +30,14 @@ class AuthController extends Controller
     {
        //dd($request->all());
 
-         // Configurar las reglas de validación
-         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-            'confirm_password' => 'required_with:password|same:password|min:6',
-            'is_role' => 'required|integer'
-        ]);
+       $user = request()->validate([
+        'name' => 'required',
+        'email' => 'required|unique:users',
+        'password' => 'required|min:6',
+        'confirm_password' => 'required_with:password|same:password|min:6',
+        'is_role' => 'required'
 
-          // Verificar si la validación falla
-          if ($validator->fails()) {
-            // Loguear errores específicos de validación
-            foreach ($validator->errors()->all() as $error) {
-                Log::error('Validation error: ' . $error);
-            }
-
-            // Retornar con errores
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+       ]);
 
        $user                  = new User();
 
@@ -61,7 +48,7 @@ class AuthController extends Controller
        $user->remember_token  = Str::random(50);
        $user->save();
 
-       return redirect('login')->with('success', 'Registro Finalizado con Éxito');
+       return redirect('login')->with('success', 'registration finish');
 
     }
 
@@ -81,20 +68,6 @@ class AuthController extends Controller
 
     public function login_post(Request $request)
     {
-
-            // Validación de datos de entrada
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|min:6',
-    ]);
-
-    $user = \App\Models\User::where('email', $request->email)->first();
-    if (!$user) {
-        Log::error('Intento de inicio de sesión fallido: Correo electrónico no encontrado ');
-        return redirect()->back()->with('error', 'El correo electrónico no está registrado');
-    }
-
-
       //dd($request->all());
       if(Auth::attempt(['email' => $request->email, 'password' => $request->password], true))
       {
@@ -119,7 +92,6 @@ class AuthController extends Controller
           }
 
       }else {
-        Log::error('Login attempt failed for email ');
         return redirect()->back()->with('error', 'Por favor verifique sus datos');
       }
     }
@@ -136,17 +108,8 @@ class AuthController extends Controller
     return view('auth.forgot');
 }
 
-
-
 public function forgot_post(Request $request)
 {
-
-        // Validación de datos de entrada
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
-
-
     $user = User::where('email', $request->email)->first();
     if ($user) {
         //$user->remember_token = Str::random(60);
@@ -156,12 +119,9 @@ public function forgot_post(Request $request)
 
         return redirect()->back()->with('success', 'Revise su correo electrónico para restablecer la contraseña');
     } else {
-        Log::error('Forgot password attempt failed for email: ' . $request->email);
         return redirect()->back()->with('error', 'El correo utilizado no está registrado en el sistema');
     }
 }
-
-
 
 public function getReset($token)
 {
@@ -175,17 +135,9 @@ public function getReset($token)
 
 public function postReset($token, ResetPassword $request)
     {
-
-            // Validación de datos de entrada
-    $request->validate([
-        'password' => 'required|min:6|confirmed',
-    ]);
-
-
         $user = User::where('remember_token', '=', $token);
 
         if ($user->count() == 0) {
-            Log::error('Invalid token provided for password reset.');
             abort(403);
         }
         $user = $user->first();

@@ -15,11 +15,6 @@ use PharIo\Manifest\Author;
 
 
 
-
-
-
-
-
 Route::get('/',[HomeController::class,'index']);
 
 // Registrarse
