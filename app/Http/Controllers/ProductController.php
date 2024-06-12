@@ -21,6 +21,8 @@ class ProductController extends Controller
     }
 
 
+    /////////////////// BUSCAR PRODUCTO //////////////////////
+
 
     public function show(Request $request)
     {
@@ -28,21 +30,6 @@ class ProductController extends Controller
         $products = Product::where('nombre_product', 'like', "%{$search}%")->get();
         return view('user.products.index', compact('products'));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         /* ////////////////////////////*/

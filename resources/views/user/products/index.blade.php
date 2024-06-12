@@ -1,5 +1,5 @@
 <!-- En tu archivo Blade -->
-@extends('layouts.navbarUser')
+@extends('layouts.User.navbarUser')
 
 <style>
     /* Overall container styling */

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Mypime;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class MyPimeAuthController extends Controller
 {
@@ -11,6 +12,7 @@ class MyPimeAuthController extends Controller
     {
         return view('auth.mypime_login');
     }
+
 
     public function login(Request $request)
     {
@@ -24,7 +26,7 @@ class MyPimeAuthController extends Controller
                 return redirect()->back()->withErrors(['error' => 'Cuenta inactiva']);
             }
 
-            return redirect()->intended('mypime.dashboard');
+            return redirect()->intended(route('mypime.dashboard'));
         }
 
         return redirect()->back()->withErrors(['error' => 'Credenciales incorrectas']);

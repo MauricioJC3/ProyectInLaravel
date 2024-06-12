@@ -6,7 +6,10 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
-use App\Http\Controllers\MyPimeAuthController;
+use App\Http\Controllers\Mypime\CajerosMypController;
+use App\Http\Controllers\Mypime\DashboardMypController;
+use App\Http\Controllers\Mypime\MyPimeAuthController;
+use App\Http\Controllers\Mypime\ProductosMypController;
 use App\Http\Controllers\MyPimeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -110,9 +113,13 @@ Route::get('mypime-login', [MyPimeAuthController::class, 'showLoginForm'])->name
 Route::post('mypime-login', [MyPimeAuthController::class, 'login'])->name('mypime.login.post');
 
 
-Route::get('mypime.dashboard', function() {
-    return view('mypime.dashboard');  // o apuntar a una acción del controlador
-})->name('mypime.dashboard')->middleware('auth:mypime');
+Route::group(['middleware' => ['auth:mypime']], function () {
+    Route::get('mypime/dashboard', [DashboardMypController::class, 'dashboard'])->name('mypime.dashboard');
+
+    Route::resource('products', ProductosMypController::class);
+    Route::resource('Cajero', CajerosMypController::class);
+});
+
 
 
 
